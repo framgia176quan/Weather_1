@@ -1,5 +1,8 @@
 package com.example.framgia.weathersimple.ui.fragment;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.framgia.weathersimple.R;
 import com.example.framgia.weathersimple.data.WeatherDataObject;
+import com.example.framgia.weathersimple.service.remote.GetWeatherDataObject;
 import com.example.framgia.weathersimple.ui.activity.MainActivity;
 
 import java.util.ArrayList;
@@ -24,15 +28,50 @@ public class CityFragment extends Fragment {
 
     TextView tvNameCity, tvDateTime, tvTemp, tvInfoWeather, tvTempNow, tvHumidityNow, tvWindNow;
     ImageView imgIcoWeather, imgIcoTempNow,imgIcoHumidityNow, imgIcoWindNow;
+    ConnectivityManager connMgr;
+
+    NetworkInfo networkInfo;
+    WeatherDataObject weatherDataObject;
 
     public CityFragment() {
         // Required empty public constructor
     }
 
+    public boolean isNetwork(){
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else  return false;
+
+    }
+
+    class GetData extends GetWeatherDataObject{
+
+
+        public GetData(Context mContext) {
+            super(mContext);
+        }
+
+        @Override
+        protected void onPostExecute(WeatherDataObject result) {
+            super.onPostExecute(result);
+            weatherDataObject= result;
+        }
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        connMgr = (ConnectivityManager) getActivity()
+                .getSystemService(getActivity().CONNECTIVITY_SERVICE);
+        networkInfo = connMgr.getActiveNetworkInfo();
+        weatherDataObject= new WeatherDataObject();
+        if(isNetwork()){
+            GetData getData = new GetData(getActivity());
+            getData.execute("Ha noi");
+
+        }
     }
 
     @Override
@@ -40,10 +79,9 @@ public class CityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_city, container, false);
 
-        WeatherDataObject weatherDataObject = (WeatherDataObject) getArguments().getSerializable(MainActivity.KEY_SEND_DATA_CITY);
-//        String a = getArguments().getString(MainActivity.KEY_SEND_DATA_CITY);
 
         tvNameCity = (TextView) container.findViewById(R.id.tv_name_city);
+        tvNameCity.setText(""+weatherDataObject.getCity().getName());
         tvDateTime = (TextView) container.findViewById(R.id.tv_date_time);
         tvTemp = (TextView) container.findViewById(R.id.tv_temp);
         tvInfoWeather = (TextView) container.findViewById(R.id.tv_infor_weather);
