@@ -210,6 +210,7 @@ public class CityFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            bindDataToView(weatherDataObject);
         }
     }
 
@@ -218,6 +219,39 @@ public class CityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_city, container, false);
+
+        initView(container);
+        loadDataFromServer();
+        return view;
+    }
+
+    public void initView(View view){
+        tvNameCity = (TextView) view.findViewById(R.id.tv_name_city);
+        tvDateTime = (TextView) view.findViewById(R.id.tv_date_time);
+        tvTemp = (TextView) view.findViewById(R.id.tv_temp);
+        tvInfoWeather = (TextView) view.findViewById(R.id.tv_infor_weather);
+        tvTempNow = (TextView) view.findViewById(R.id.tv_temp_now);
+        tvHumidityNow = (TextView) view.findViewById(R.id.tv_humidity_now);
+        tvWindNow = (TextView) view.findViewById(R.id.tv_wind_now);
+
+        imgIcoWeather = (ImageView) view.findViewById(R.id.img_ico_weather);
+        imgIcoTempNow = (ImageView) view.findViewById(R.id.img_ico_temp_now);
+        imgIcoHumidityNow = (ImageView) view.findViewById(R.id.img_ico_humidity_now);
+        imgIcoWindNow = (ImageView) view.findViewById(R.id.img_ico_wind_now);
+
+    }
+
+    public void bindDataToView(WeatherDataObject weatherDataObject){
+        tvNameCity.setText(""+weatherDataObject.getCity().getName());
+    }
+
+    public void loadDataFromServer(){
         connMgr = (ConnectivityManager) getActivity()
                 .getSystemService(getActivity().CONNECTIVITY_SERVICE);
         networkInfo = connMgr.getActiveNetworkInfo();
@@ -227,29 +261,5 @@ public class CityFragment extends Fragment {
             getData.execute(nameCity);
 
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_city, container, false);
-
-
-        tvNameCity = (TextView) container.findViewById(R.id.tv_name_city);
-        tvNameCity.setText(""+weatherDataObject.getCity().getName());
-        tvDateTime = (TextView) container.findViewById(R.id.tv_date_time);
-        tvTemp = (TextView) container.findViewById(R.id.tv_temp);
-        tvInfoWeather = (TextView) container.findViewById(R.id.tv_infor_weather);
-        tvTempNow = (TextView) container.findViewById(R.id.tv_temp_now);
-        tvHumidityNow = (TextView) container.findViewById(R.id.tv_humidity_now);
-        tvWindNow = (TextView) container.findViewById(R.id.tv_wind_now);
-
-        imgIcoWeather = (ImageView) container.findViewById(R.id.img_ico_weather);
-        imgIcoTempNow = (ImageView) container.findViewById(R.id.img_ico_temp_now);
-        imgIcoHumidityNow = (ImageView) container.findViewById(R.id.img_ico_humidity_now);
-        imgIcoWindNow = (ImageView) container.findViewById(R.id.img_ico_wind_now);
-
-
-        return view;
     }
 }
