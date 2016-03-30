@@ -1,8 +1,10 @@
 package com.example.framgia.weathersimple.data;
 
+import java.io.Serializable;
+
 /**
  * Created by framgia on 29/03/2016.
- */public class WindObject {
+ */public class WindObject implements Serializable {
     double speed;
     double deg;
 

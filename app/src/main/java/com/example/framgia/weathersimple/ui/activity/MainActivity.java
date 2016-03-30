@@ -1,10 +1,14 @@
 package com.example.framgia.weathersimple.ui.activity;
 
 import android.app.Dialog;
+
 import android.app.ProgressDialog;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -29,21 +33,27 @@ import com.example.framgia.weathersimple.data.WeatherObject;
 import com.example.framgia.weathersimple.data.WeatherDataObject;
 import com.example.framgia.weathersimple.data.WindObject;
 import com.example.framgia.weathersimple.network.ServiceHandler;
+import com.example.framgia.weathersimple.ui.adapter.PagerAdapter;
+import com.example.framgia.weathersimple.ui.fragment.CityFragment;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private TextView tv;
-    private Button btn;
-    private ProgressDialog pDialog;
 
-    // URL to get contacts JSON
+    private ProgressDialog pDialog;
+    private PagerAdapter pagerAdapter;
+    private ViewPager viewPager;
+
     private static String api = "http://api.openweathermap.org/data/2.5/forecast?appid=b7f3847208e4a3fe8913be845bdb88df&mode=json&q=";
+
+    public static final String KEY_SEND_DATA_CITY = "city";
 
 
     public static final String TAG_CITY = "city";
@@ -98,17 +108,37 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //tv = (TextView) findViewById(R.id.txtName);
 
-        btn = (Button) findViewById(R.id.btnName);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GetWeatherDataObject getContacts = new GetWeatherDataObject();
-                getContacts.execute();
 
-            }
-        });
+        viewPager = (ViewPager) findViewById(R.id.view_pager_main);
+
+
+        if(isNetworkConnected()){
+            GetWeatherDataObject getData = new GetWeatherDataObject();
+            getData.execute();
+
+
+        } else {
+            Toast.makeText(MainActivity.this, "Kiểm tra lại kết nối mạng", Toast.LENGTH_SHORT).show();
+//            Dialog dialog = new Dialog(MainActivity.this);
+//            dialog.setTitle(R.string.notice);
+//            dialog.show();
+        }
+
+        initPaging();
+
+    }
+
+
+
+    public void initPaging(){
+
+        List<Fragment> fragments = new Vector<Fragment>();
+        fragments.add(Fragment.instantiate(MainActivity.this, CityFragment.class.getName()));
+
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), fragments);
+        viewPager = (ViewPager) findViewById(R.id.view_pager_main);
+        viewPager.setAdapter(pagerAdapter);
     }
 
     private class GetWeatherDataObject extends AsyncTask<Void, Void, Void> {
@@ -133,7 +163,8 @@ public class MainActivity extends AppCompatActivity
             String url = api + "Ha noi";
             String jsonStr = sh.makeServiceCall(url.replaceAll(" ", "%20"), ServiceHandler.GET);
 
-            Log.d("Response: ", "> " + jsonStr);
+//            Log.d("Response: ", "> " + jsonStr);
+
 
             if (jsonStr != null) {
                 try {
@@ -156,9 +187,9 @@ public class MainActivity extends AppCompatActivity
 
                     JSONArray list = weatherJSONObject.getJSONArray(TAG_LIST);
 
-
-                    for (int i = 0; i < weatherJSONObject.length(); i++) {
-                        JSONObject main = list.getJSONObject(i);
+                    for (int i = 0; i < list.length(); i++) {
+                        JSONObject obj = list.getJSONObject(i);
+                        JSONObject main = obj.getJSONObject(TAG_LIST_MAIN);
                         String temp = main.getString(TAG_LIST_MAIN_TEMP);
                         String temp_min = main.getString(TAG_LIST_MAIN_TEMP_MIN);
                         String temp_max = main.getString(TAG_LIST_MAIN_TEMP_MAX);
@@ -172,9 +203,10 @@ public class MainActivity extends AppCompatActivity
                         mainObject.setPressure(Double.parseDouble(pressure));
                         mainObject.setHumidity(Integer.parseInt(humidity));
 
-                        Log.d("Quan",""+mainObject.toString());
+//                        Log.d("Quan", "" + mainObject.toString());
 
-                        JSONArray weatherArray = list.getJSONArray(i);
+
+                        JSONArray weatherArray = obj.getJSONArray(TAG_LIST_WEATHER);
                         JSONObject weather = weatherArray.getJSONObject(0);
                         String idWeather = weather.getString(TAG_LIST_WEATHER_ID);
                         String mainWeather = weather.getString(TAG_LIST_WEATHER_MAIN);
@@ -182,25 +214,30 @@ public class MainActivity extends AppCompatActivity
                         String icon = weather.getString(TAG_LIST_WEATHER_ICON);
 
                         ArrayList<WeatherObject> weatherObjects = new ArrayList<WeatherObject>();
-                        weatherObjects.set(0, new WeatherObject(Integer.parseInt(idWeather),mainWeather, description, icon ));
+                        weatherObjects.add(0, new WeatherObject(Integer.parseInt(idWeather), mainWeather, description, icon));
 
+//                        Log.d("Quan", "" + weatherObjects.toString());
 
-                        JSONObject clouds = list.getJSONObject(i);
+                        JSONObject clouds = obj.getJSONObject(TAG_LIST_CLOUDS);
                         String all = clouds.getString(TAG_LIST_CLOUDS_ALL);
 
                         CloudsObject cloudsObject = new CloudsObject();
                         cloudsObject.setAll(Integer.parseInt(all));
 
-                        JSONObject wind = list.getJSONObject(i);
-                        String speed = clouds.getString(TAG_LIST_WIND_SPEED);
-                        String deg = clouds.getString(TAG_LIST_WIND_DEG);
+//                        Log.d("Quan", "" + cloudsObject.toString());
+
+                        JSONObject wind = obj.getJSONObject(TAG_LIST_WIND);
+                        String speed = wind.getString(TAG_LIST_WIND_SPEED);
+                        String deg = wind.getString(TAG_LIST_WIND_DEG);
 
                         WindObject windObject = new WindObject();
                         windObject.setSpeed(Double.parseDouble(speed));
                         windObject.setDeg(Double.parseDouble(deg));
 
-                        String dt_txt = list.getString(i);
+//                        Log.d("Quan", "" + windObject.toString());
 
+                        String dt_txt = obj.getString(TAG_LIST_DT_TXT);
+//                        Log.d("Quan", "" + dt_txt.toString());
 
                         arrayListList.add(new ListObject(mainObject, weatherObjects, cloudsObject, windObject, dt_txt));
 
@@ -208,6 +245,7 @@ public class MainActivity extends AppCompatActivity
 
                     weatherObjectData.setCity(cityObject);
                     weatherObjectData.setList(arrayListList);
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -225,17 +263,21 @@ public class MainActivity extends AppCompatActivity
             // Dismiss the progress dialog
             if (pDialog.isShowing())
                 pDialog.dismiss();
-            /**
-             * Updating parsed JSON data into ListView
-             * */
 
-            Log.d("Quan", ""+weatherObjectData.getCity().getName());
+
+            Toast.makeText(MainActivity.this, ""+weatherObjectData.getCity().getName(), Toast.LENGTH_SHORT).show();
+            Log.d("Quan quan", "" + weatherObjectData.toString());
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(KEY_SEND_DATA_CITY, weatherObjectData);
+//            bundle.putSerializable(KEY_SEND_DATA_CITY, "hanoi");
+            CityFragment cityFragment = new CityFragment();
+            cityFragment.setArguments(bundle);
 
         }
 
     }
 
-    private boolean isNetworkConnected() {
+    public boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(MainActivity.this.CONNECTIVITY_SERVICE);
 
         return cm.getActiveNetworkInfo() != null;
@@ -303,20 +345,15 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isNetworkConnected()) {
-            //Toast.makeText(MainActivity.this, "Co internet", Toast.LENGTH_SHORT).show();
 
-        } else {
-            Toast.makeText(MainActivity.this, "ko co internet", Toast.LENGTH_SHORT).show();
-            Dialog dialog = new Dialog(MainActivity.this);
-            dialog.setTitle(R.string.notice);
-            dialog.show();
-        }
+
+
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.example.framgia.weathersimple.data;
 
+import java.io.Serializable;
+
 /**
  * Created by framgia on 29/03/2016.
  */
-public class CoordObject {
+public class CoordObject implements Serializable {
     double lon;
     double lat;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/shape_gradient_rain"
     >
 
@@ -9,19 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
 
-        android:paddingLeft="15dp"
+        android:paddingLeft="32dp"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txt_name_city"
+            android:id="@+id/tv_name_city"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="aaaaa"
             android:textStyle="bold"
             android:textSize="30sp"/>
         <TextView
-            android:id="@+id/txt_date_time"
+            android:id="@+id/tv_date_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="aaaaa"
@@ -40,25 +40,26 @@
             android:layout_height="190dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+
             android:background="@drawable/shape_background_transparent_black">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:paddingLeft="15dp"
+                android:paddingLeft="32dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txt_temp"
+                    android:id="@+id/tv_temp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="aaaa"
                     android:textSize="40sp"
                     android:textStyle="bold"/>
                 <TextView
-                    android:id="@+id/txt_infor_weather"
+                    android:id="@+id/tv_infor_weather"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="aaaa"
@@ -66,7 +67,7 @@
 
             </LinearLayout>
             <ImageView
-                android:id="@+id/img_icon_weather"
+                android:id="@+id/img_ico_weather"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
@@ -89,7 +90,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
-                        android:id="@+id/txt_temp_now"
+                        android:id="@+id/tv_temp_now"
                         android:text="aaa"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
@@ -107,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <TextView
-                    android:id="@+id/txt_humidity_now"
+                    android:id="@+id/tv_humidity_now"
                     android:text="aaa"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent" />
@@ -125,7 +126,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent" />
                 <TextView
-                    android:id="@+id/txt_wind_now"
+                    android:id="@+id/tv_wind_now"
                     android:text="aaaa"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent" />
