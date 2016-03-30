@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.framgia.weathersimple.R;
@@ -224,7 +226,8 @@ public class CityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_city, container, false);
+        View view = inflater.inflate(R.layout.fragment_city, container , false);
+
 
         initView(container);
         loadDataFromServer();
@@ -232,15 +235,23 @@ public class CityFragment extends Fragment {
     }
 
     public void initView(View view){
+        LinearLayout llContent = (LinearLayout) view.findViewById(R.id.layout_content_detail_now);
+
+        LinearLayout llWeather = (LinearLayout) view.findViewById(R.id.layout_detail_weather);
+
         tvNameCity = (TextView) view.findViewById(R.id.tv_name_city);
+        Log.d("VA tag", "tvNameCity = " +tvNameCity );
         tvDateTime = (TextView) view.findViewById(R.id.tv_date_time);
         tvTemp = (TextView) view.findViewById(R.id.tv_temp);
         tvInfoWeather = (TextView) view.findViewById(R.id.tv_infor_weather);
+        imgIcoWeather = (ImageView) view.findViewById(R.id.img_ico_weather);
+
+
         tvTempNow = (TextView) view.findViewById(R.id.tv_temp_now);
         tvHumidityNow = (TextView) view.findViewById(R.id.tv_humidity_now);
         tvWindNow = (TextView) view.findViewById(R.id.tv_wind_now);
 
-        imgIcoWeather = (ImageView) view.findViewById(R.id.img_ico_weather);
+
         imgIcoTempNow = (ImageView) view.findViewById(R.id.img_ico_temp_now);
         imgIcoHumidityNow = (ImageView) view.findViewById(R.id.img_ico_humidity_now);
         imgIcoWindNow = (ImageView) view.findViewById(R.id.img_ico_wind_now);
@@ -248,7 +259,8 @@ public class CityFragment extends Fragment {
     }
 
     public void bindDataToView(WeatherDataObject weatherDataObject){
-        tvNameCity.setText(""+weatherDataObject.getCity().getName());
+        tvNameCity.setText("" + weatherDataObject.getCity().getName());
+
     }
 
     public void loadDataFromServer(){
