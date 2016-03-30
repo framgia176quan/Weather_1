@@ -7,8 +7,6 @@ package com.example.framgia.weathersimple.network;
 
 import android.net.ConnectivityManager;
 
-import com.example.framgia.weathersimple.ui.activity.MainActivity;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
