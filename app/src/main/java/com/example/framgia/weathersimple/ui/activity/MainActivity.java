@@ -56,18 +56,14 @@ public class MainActivity extends AppCompatActivity
 
         viewPager = (ViewPager) findViewById(R.id.view_pager_main);
 
-
-
         initPaging();
 
     }
 
-
-
     public void initPaging(){
 
         List<Fragment> fragments = new ArrayList<Fragment>();
-        cityFragment = new CityFragment();
+        cityFragment = new CityFragment("Hanoi");
         fragments.add(cityFragment);
         pagerAdapter = new PagerAdapter(getSupportFragmentManager(), fragments);
         viewPager = (ViewPager) findViewById(R.id.view_pager_main);

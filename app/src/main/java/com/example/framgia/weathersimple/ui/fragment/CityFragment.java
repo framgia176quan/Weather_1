@@ -5,9 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +14,7 @@ import android.widget.TextView;
 import com.example.framgia.weathersimple.R;
 import com.example.framgia.weathersimple.data.WeatherDataObject;
 import com.example.framgia.weathersimple.service.remote.GetWeatherDataObject;
-import com.example.framgia.weathersimple.ui.activity.MainActivity;
 
-import java.util.ArrayList;
 
 
 
@@ -32,9 +27,14 @@ public class CityFragment extends Fragment {
 
     NetworkInfo networkInfo;
     WeatherDataObject weatherDataObject;
+    String nameCity;
 
-    public CityFragment() {
-        // Required empty public constructor
+    public CityFragment(String nameCity) {
+        this.nameCity = nameCity;
+    }
+
+    public void setNameCity(String nameCity) {
+        this.nameCity = nameCity;
     }
 
     public boolean isNetwork(){
@@ -69,7 +69,7 @@ public class CityFragment extends Fragment {
         weatherDataObject= new WeatherDataObject();
         if(isNetwork()){
             GetData getData = new GetData(getActivity());
-            getData.execute("Ha noi");
+            getData.execute(nameCity);
 
         }
     }

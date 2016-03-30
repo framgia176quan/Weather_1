@@ -29,16 +29,16 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/activity/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-2.3225806">
-              <caret line="70" column="36" selection-start-line="70" selection-start-column="36" selection-end-line="70" selection-end-column="36" />
+            <state vertical-scroll-proportion="1.5728155">
+              <caret line="56" column="67" selection-start-line="56" selection-start-column="67" selection-end-line="56" selection-end-column="67" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1632#1663#0" expanded="true" />
                 <element signature="e#1665#1697#0" expanded="true" />
-                <element signature="e#2104#2114#0" expanded="true" />
+                <element signature="e#2100#2110#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -54,26 +54,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CityFragment.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CityFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/fragment/CityFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5240642">
-              <caret line="63" column="43" selection-start-line="63" selection-start-column="43" selection-end-line="63" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1453#1454#0" expanded="true" />
-                <element signature="e#1492#1493#0" expanded="true" />
+                <element signature="e#964#965#0" expanded="true" />
+                <element signature="e#1004#1005#0" expanded="true" />
+                <element signature="e#1052#1053#0" expanded="true" />
+                <element signature="e#1092#1093#0" expanded="true" />
+                <element signature="e#1345#1346#0" expanded="true" />
+                <element signature="e#1384#1385#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FragmentManager.java" pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/Downloads/AndroidSDK/extras/android/m2repository/com/android/support/support-v4/23.2.1/support-v4-23.2.1-sources.jar!/android/support/v4/app/FragmentManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="1066" column="0" selection-start-line="1066" selection-start-column="0" selection-end-line="1066" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -1711,8 +1705,8 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/data/WindObject.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_content_detail_now.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/service/remote/GetWeatherDataObject.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/activity/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/fragment/CityFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/activity/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -2235,7 +2229,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3494364" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4041868" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -2310,14 +2304,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/fragment/CityFragment.java</url>
-          <line>56</line>
-          <properties />
-          <option name="timeStamp" value="64" />
-        </line-breakpoint>
-      </breakpoints>
       <option name="time" value="65" />
     </breakpoint-manager>
     <watches-manager />
@@ -2338,7 +2324,7 @@
             <element signature="imports" expanded="true" />
             <element signature="e#1632#1663#0" expanded="true" />
             <element signature="e#1665#1697#0" expanded="true" />
-            <element signature="e#2104#2114#0" expanded="true" />
+            <element signature="e#2100#2110#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2428,7 +2414,7 @@
             <element signature="imports" expanded="true" />
             <element signature="e#1632#1663#0" expanded="true" />
             <element signature="e#1665#1697#0" expanded="true" />
-            <element signature="e#2104#2114#0" expanded="true" />
+            <element signature="e#2100#2110#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2774,22 +2760,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/activity/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.3225806">
-          <caret line="70" column="36" selection-start-line="70" selection-start-column="36" selection-end-line="70" selection-end-column="36" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1632#1663#0" expanded="true" />
-            <element signature="e#1665#1697#0" expanded="true" />
-            <element signature="e#2104#2114#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/Downloads/AndroidSDK/extras/android/m2repository/com/android/support/support-v4/23.2.1/support-v4-23.2.1-sources.jar!/android/support/v4/app/FragmentManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
+        <state vertical-scroll-proportion="19.364706">
           <caret line="1066" column="0" selection-start-line="1066" selection-start-column="0" selection-end-line="1066" selection-end-column="0" />
           <folding />
         </state>
@@ -2797,12 +2770,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/fragment/CityFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5240642">
-          <caret line="63" column="43" selection-start-line="63" selection-start-column="43" selection-end-line="63" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="71" column="36" selection-start-line="71" selection-start-column="36" selection-end-line="71" selection-end-column="36" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1453#1454#0" expanded="true" />
-            <element signature="e#1492#1493#0" expanded="true" />
+            <element signature="e#964#965#0" expanded="true" />
+            <element signature="e#1004#1005#0" expanded="true" />
+            <element signature="e#1052#1053#0" expanded="true" />
+            <element signature="e#1092#1093#0" expanded="true" />
+            <element signature="e#1345#1346#0" expanded="true" />
+            <element signature="e#1384#1385#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/framgia/weathersimple/ui/activity/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.5728155">
+          <caret line="56" column="67" selection-start-line="56" selection-start-column="67" selection-end-line="56" selection-end-column="67" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1632#1663#0" expanded="true" />
+            <element signature="e#1665#1697#0" expanded="true" />
+            <element signature="e#2100#2110#0" expanded="true" />
           </folding>
         </state>
       </provider>
