@@ -1,9 +1,8 @@
-package com.example.lethuy.weathersimpleapp;
+package com.example.lethuy.weathersimpleapp.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -11,8 +10,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.City;
-import model.Weather;
+import com.example.lethuy.weathersimpleapp.data.model.City;
+import com.example.lethuy.weathersimpleapp.data.model.Weather;
 
 /**
  * Created by Le Thuy on 28/03/2016.

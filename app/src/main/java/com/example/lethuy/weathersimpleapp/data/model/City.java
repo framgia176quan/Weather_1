@@ -1,4 +1,4 @@
-package model;
+package com.example.lethuy.weathersimpleapp.data.model;
 
 /**
  * Created by Le Thuy on 29/03/2016.
