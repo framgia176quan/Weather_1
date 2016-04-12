@@ -1,7 +1,7 @@
 package com.example.lethuy.weathersimpleapp.network;
 
 /**
- * Created by framgia on 29/03/2016.
+ * Created by Nguyen Manh Quan on 29/03/2016.
  */
 
 
@@ -10,12 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-
-
-/**
- * Created by framgia on 29/03/2016.
- */
 
 
 public class ServiceHandler {
@@ -35,7 +29,6 @@ public class ServiceHandler {
         try {
             URL url = new URL(textUrl);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-
             httpConn.setAllowUserInteraction(false);
             httpConn.setInstanceFollowRedirects(true);
             httpConn.setRequestMethod("GET");
