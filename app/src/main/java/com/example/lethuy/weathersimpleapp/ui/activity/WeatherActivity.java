@@ -1,6 +1,7 @@
 package com.example.lethuy.weathersimpleapp.ui.activity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -15,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +24,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.lethuy.weathersimpleapp.R;
+import com.example.lethuy.weathersimpleapp.data.City;
+import com.example.lethuy.weathersimpleapp.data.Clouds;
+import com.example.lethuy.weathersimpleapp.data.Coord;
+import com.example.lethuy.weathersimpleapp.data.List;
+import com.example.lethuy.weathersimpleapp.data.Main;
+import com.example.lethuy.weathersimpleapp.data.Weather;
 import com.example.lethuy.weathersimpleapp.data.WeatherData;
+import com.example.lethuy.weathersimpleapp.data.Wind;
 import com.example.lethuy.weathersimpleapp.database.DatabaseHelper;
+import com.example.lethuy.weathersimpleapp.network.GetWeatherDataObject;
+import com.example.lethuy.weathersimpleapp.network.ServiceHandler;
 import com.example.lethuy.weathersimpleapp.ui.adapter.CityPagerAdapter;
 import com.example.lethuy.weathersimpleapp.ui.adapter.WeatherWeekPagerAdapter;
 import com.example.lethuy.weathersimpleapp.ui.fragment.CityTodayFragment;
 import com.example.lethuy.weathersimpleapp.ui.fragment.WeatherWeekFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 /**
  * Created by framgia on 12/04/2016.
@@ -114,6 +133,169 @@ public class WeatherActivity extends AppCompatActivity implements NavigationView
             overrideFonts(WeatherActivity.this, findViewById(R.id.main_view));
         }
 
+    class GetData extends GetWeatherDataObject {
+
+        private ProgressDialog pDialog;
+        public GetData(Context mContext) {
+            super(mContext);
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (isFinishing() ==false) {
+                pDialog = new ProgressDialog(WeatherActivity.this);
+                pDialog.setMessage("Please wait...");
+                pDialog.setCancelable(false);
+                pDialog.show();
+            }
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... arg0) {
+
+            ServiceHandler serviceHandler = new ServiceHandler();
+
+            // Making a request to url and getting response
+            String url = null;
+            try {
+
+                url = api + URLEncoder.encode(arg0[0], "UTF-8");
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            ;
+            String jsonStr = serviceHandler.makeServiceCall(url, ServiceHandler.GET);
+            JSONObject weatherJSONObject = new JSONObject();
+//            Log.d("Response: ", "> " + jsonStr);
+            if (jsonStr != null) {
+
+                try {
+                    weatherJSONObject = new JSONObject(jsonStr);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                Log.e("ServiceHandler", "Couldn't get any data from the url");
+            }
+            return weatherJSONObject;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+            super.onPostExecute(result);
+            try {
+                weatherDataObject = new WeatherData();
+                City cityObject = new City();
+                ArrayList<List> arrayListList = new ArrayList<List>();
+
+                JSONObject city = result.getJSONObject(TAG_CITY);
+                String id = city.getString(TAG_CITY_ID);
+                String name = city.getString(TAG_CITY_NAME);
+
+                JSONObject coord = city.getJSONObject(TAG_CITY_COORD);
+                String lon = coord.getString(TAG_CITY_COORD_LON);
+                String lat = coord.getString(TAG_CITY_COORD_LAT);
+
+                cityObject.setId(Integer.parseInt(id));
+                cityObject.setName(name);
+                cityObject.setCoord(new Coord(Double.parseDouble(lon), Double.parseDouble(lat)));
+
+                JSONArray list = result.getJSONArray(TAG_LIST);
+
+                for (int i = 0; i < list.length(); i++) {
+                    JSONObject obj = list.getJSONObject(i);
+                    JSONObject main = obj.getJSONObject(TAG_LIST_MAIN);
+                    String temp = main.getString(TAG_LIST_MAIN_TEMP);
+                    String temp_min = main.getString(TAG_LIST_MAIN_TEMP_MIN);
+                    String temp_max = main.getString(TAG_LIST_MAIN_TEMP_MAX);
+                    String pressure = main.getString(TAG_LIST_MAIN_PRESSURE);
+                    String humidity = main.getString(TAG_LIST_MAIN_HUMIDITY);
+
+                    Main mainObject = new Main();
+                    mainObject.setTemp(Double.parseDouble(temp));
+                    mainObject.setTempMin(Double.parseDouble(temp_min));
+                    mainObject.setTempMax(Double.parseDouble(temp_max));
+                    mainObject.setPressure(Double.parseDouble(pressure));
+                    mainObject.setHumidity(Integer.parseInt(humidity));
+
+                    Log.d("Quan", "" + mainObject.toString());
+
+
+                    JSONArray weatherArray = obj.getJSONArray(TAG_LIST_WEATHER);
+                    JSONObject weather = weatherArray.getJSONObject(0);
+                    String idWeather = weather.getString(TAG_LIST_WEATHER_ID);
+                    String mainWeather = weather.getString(TAG_LIST_WEATHER_MAIN);
+                    String description = weather.getString(TAG_LIST_WEATHER_DESCRRIPTION);
+                    String icon = weather.getString(TAG_LIST_WEATHER_ICON);
+
+                    ArrayList<Weather> weatherObjects = new ArrayList<Weather>();
+                    weatherObjects.add(0, new Weather(Integer.parseInt(idWeather), mainWeather, description, icon));
+
+//                        Log.d("Quan", "" + weatherObjects.toString());
+
+                    JSONObject clouds = obj.getJSONObject(TAG_LIST_CLOUDS);
+                    String all = clouds.getString(TAG_LIST_CLOUDS_ALL);
+
+                    Clouds cloudsObject = new Clouds();
+                    cloudsObject.setAll(Integer.parseInt(all));
+
+//                        Log.d("Quan", "" + cloudsObject.toString());
+
+                    JSONObject wind = obj.getJSONObject(TAG_LIST_WIND);
+                    String speed = wind.getString(TAG_LIST_WIND_SPEED);
+                    String deg = wind.getString(TAG_LIST_WIND_DEG);
+
+                    Wind windObject = new Wind();
+                    windObject.setSpeed(Double.parseDouble(speed));
+                    windObject.setDeg(Double.parseDouble(deg));
+
+//                        Log.d("Quan", "" + windObject.toString());
+
+                    String dt_txt = obj.getString(TAG_LIST_DT_TXT);
+//                        Log.d("Quan", "" + dt_txt.toString());
+
+                    arrayListList.add(new List(mainObject, weatherObjects, cloudsObject, windObject, dt_txt));
+
+                }
+
+                weatherDataObject.setCity(cityObject);
+                weatherDataObject.setList(arrayListList);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            cityTodayFragment.setData(weatherDataObject);
+            weatherWeekFragmentOne.setWeatherData(weatherDataObject, 8);
+            weatherWeekFragmentTwo.setWeatherData(weatherDataObject, 24);
+
+//            updateDataFromDatabase(weatherDataObject);
+
+
+            Log.d("AVA", "" + cityTodayFragment.toString());
+            Log.d("AVA", "" + weatherDataObject.getCity().getName().toString());
+
+//            if (cityTodayFragment.getCityName().equalsIgnoreCase("ha noi")) {
+//                if (SettingSharePreference.getIntPreference(WeatherActivity.this, SettingNotificationActivity.KEY_SETTING_NOTITICATION) == -1 || SettingSharePreference.getIntPreference(WeatherActivity.this, SettingNotificationActivity.KEY_SETTING_NOTITICATION) == 1) {
+//                    ImageLoaderForNotification imageLoader = new ImageLoaderForNotification(WeatherActivity.this);
+//                    imageLoader.execute("" + urlImage + weatherDataObject.getList().get(0).getWeather().get(0).getIcon() + ".png");
+//                }
+//            }
+
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
+
+        }
+
+    }
+
+
     public boolean isNetworkOnline() {
         boolean status = false;
         try {
@@ -148,6 +330,7 @@ public class WeatherActivity extends AppCompatActivity implements NavigationView
         } catch (Exception e) {
         }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
