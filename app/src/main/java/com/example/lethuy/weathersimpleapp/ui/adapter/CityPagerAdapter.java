@@ -3,6 +3,7 @@ package com.example.lethuy.weathersimpleapp.ui.adapter;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.lethuy.weathersimpleapp.R;
 import com.example.lethuy.weathersimpleapp.database.DatabaseHelper;
 import com.example.lethuy.weathersimpleapp.ui.fragment.CityTodayFragment;
 
@@ -15,7 +16,7 @@ public class CityPagerAdapter extends FragmentPagerAdapter {
 
     private DatabaseHelper db;
     private ArrayList<CityTodayFragment> fragments;
-
+    private static final String CITY_DEFAULT = "Ha Noi";
     public CityPagerAdapter(FragmentManager fm) {
         super(fm);
 
@@ -48,11 +49,9 @@ public class CityPagerAdapter extends FragmentPagerAdapter {
 
     private void initFragments() {
 
-        CityTodayFragment cityHaNoi = new CityTodayFragment();
-        cityHaNoi.setCityName("ha noi");
-
-
-        fragments.add(cityHaNoi);
+        CityTodayFragment cityDefault = new CityTodayFragment();
+        cityDefault.setCityName(CITY_DEFAULT);
+        fragments.add(cityDefault);
 
     }
 

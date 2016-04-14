@@ -1,12 +1,17 @@
 package com.example.lethuy.weathersimpleapp.ui.activity;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -22,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lethuy.weathersimpleapp.R;
 import com.example.lethuy.weathersimpleapp.data.City;
@@ -50,8 +56,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -61,6 +74,9 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Nguyen Manh Q on 12/04/2016.
@@ -236,18 +252,18 @@ public class WeatherActivity extends AppCompatActivity implements NavigationView
             weatherWeekFragmentOne.setWeatherData(weatherDataObject, 8);
             weatherWeekFragmentTwo.setWeatherData(weatherDataObject, 24);
             updateDataFromDatabase(weatherDataObject);
-// if (cityTodayFragment.getCityName().equalsIgnoreCase("ha noi")) {
-// if (SettingSharePreference.getIntPreference(WeatherActivity.this, SettingNotificationActivity.KEY_SETTING_NOTITICATION) == -1 || SettingSharePreference.getIntPreference(WeatherActivity.this, SettingNotificationActivity.KEY_SETTING_NOTITICATION) == 1) {
-// ImageLoaderForNotification imageLoader = new ImageLoaderForNotification(WeatherActivity.this);
-// imageLoader.execute("" + urlImage + weatherDataObject.getList().get(0).getWeather().get(0).getIcon() + ".png");
-// }
-// }
+            if (cityTodayFragment.getCityName().equalsIgnoreCase(getString(R.string.city_default))) {
+                if (SettingSharePreference.getIntPreference(WeatherActivity.this, SettingNotificationActivity.KEY_SETTING_NOTITICATION) == -1 || SettingSharePreference.getIntPreference(WeatherActivity.this, SettingNotificationActivity.KEY_SETTING_NOTITICATION) == 1) {
+                    ImageLoaderForNotification imageLoader = new ImageLoaderForNotification(WeatherActivity.this);
+                    imageLoader.execute("" + urlImage + weatherDataObject.getList().get(0).getWeather().get(0).getIcon() + ".png");
+                }
+            }
             if (pDialog.isShowing()) {
                 pDialog.dismiss();
             }
         }
     }
-    
+
 
     public boolean isNetworkOnline() {
         boolean status = false;
@@ -331,4 +347,277 @@ public class WeatherActivity extends AppCompatActivity implements NavigationView
         db.addWeather(new WeatherDatabase(weatherDataObject.getCity().getId(), String.valueOf(Tool.convertKenvilToCelcius(Float.parseFloat("" + weatherDataObject.getList().get(0).getMain().getTemp()))) + "\u2103", String.valueOf(Tool.convertKenvilToCelcius(Float.parseFloat("" + weatherDataObject.getList().get(32).getMain().getTempMin()))) + "\u2103", String.valueOf(Tool.convertKenvilToCelcius(Float.parseFloat("" + weatherDataObject.getList().get(32).getMain().getTempMax()))) + "\u2103", String.valueOf(weatherDataObject.getList().get(32).getMain().getHumidity() + "%"), weatherDataObject.getList().get(32).getMain().getPressure(), weatherDataObject.getList().get(32).getWeather().get(0).getMain(), weatherDataObject.getList().get(32).getWeather().get(0).getIcon(), weatherDataObject.getList().get(32).getDtTxt().substring(11, 19), weatherDataObject.getList().get(32).getDtTxt().substring(0, 10)));
 
     }
+
+    private void updateGUI() {
+
+        //tv.setText(String.valueOf(i));
+        myHandler.post(updateRunable);
+    }
+
+    final Runnable updateRunable = new Runnable() {
+        public void run() {
+
+            processUpdate();
+        }
+
+    };//runnable
+
+
+    public void processUpdate() {
+
+        if (isNetworkOnline()) {
+            if (timesLoad == 0) {
+                viewPagerCity = (ViewPager) findViewById(R.id.viewpagerCity);
+                viewPagerWeek = (ViewPager) findViewById(R.id.viewpagerWeek);
+
+
+                if (db.getAllCity().size() <= 1) {
+
+                    cityPagerAdapter = new CityPagerAdapter(getSupportFragmentManager());
+                    viewPagerCity.setAdapter(cityPagerAdapter);
+
+                } else {
+                    cityPagerAdapter = new CityPagerAdapter(getSupportFragmentManager(), db);
+                    viewPagerCity.setAdapter(cityPagerAdapter);
+                }
+
+                weatherWeekPagerAdapter = new WeatherWeekPagerAdapter(getSupportFragmentManager());
+                viewPagerWeek.setAdapter(weatherWeekPagerAdapter);
+
+                cityTodayFragment = cityPagerAdapter.getItem(0);
+                weatherWeekFragmentOne = weatherWeekPagerAdapter.getItem(0);
+                weatherWeekFragmentTwo = weatherWeekPagerAdapter.getItem(1);
+                timesLoad++;
+            }
+
+            loadData(cityTodayFragment);
+
+            viewPagerCity.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    cityTodayFragment = cityPagerAdapter.getItem(position);
+                    CityDatabase cityDatabaseChange = db.getCityByName(cityTodayFragment.getCityName());
+                    viewPagerWeek.setCurrentItem(0);
+                    weatherWeekFragmentOne = weatherWeekPagerAdapter.getItem(0);
+                    weatherWeekFragmentTwo = weatherWeekPagerAdapter.getItem(1);
+
+                    Date date = new Date();
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String strToday = dateFormat.format(date);
+
+                    for (int i = 0; i < db.getAllWeatherInfo().size() - 1; i++) {
+
+                        if (strToday.equalsIgnoreCase(db.getAllWeatherInfo().get(i).getDate().trim()) && db.getIdCity(cityPagerAdapter.getItem(position).getCityName()) == db.getAllWeatherInfo().get(i).getId()) {
+
+
+                            cityTodayFragment.setDataOffline(cityDatabaseChange, db.getAllWeatherInfo().get(i));
+
+                            weatherWeekFragmentOne.setDataOffline(db.getAllWeatherInfo().get(i + 1), db.getAllWeatherInfo().get(i + 2));
+                            weatherWeekFragmentTwo.setDataOffline(db.getAllWeatherInfo().get(i + 3), db.getAllWeatherInfo().get(i + 4));
+                            return;
+                        }
+                    }
+                    cityTodayFragment = cityPagerAdapter.getItem(position);
+                    viewPagerWeek.setCurrentItem(0);
+                    weatherWeekFragmentOne = weatherWeekPagerAdapter.getItem(0);
+                    weatherWeekFragmentTwo = weatherWeekPagerAdapter.getItem(1);
+                    loadData(cityTodayFragment);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
+
+
+        } else {
+            processUpdateOffline();
+        }
+    }
+
+    public void processUpdateOffline() {
+
+        viewPagerCity = (ViewPager) findViewById(R.id.viewpagerCity);
+        viewPagerWeek = (ViewPager) findViewById(R.id.viewpagerWeek);
+
+        if (db.getAllCity().size() <= 1) {
+
+            cityPagerAdapter = new CityPagerAdapter(getSupportFragmentManager());
+            viewPagerCity.setAdapter(cityPagerAdapter);
+
+        } else {
+            cityPagerAdapter = new CityPagerAdapter(getSupportFragmentManager(), db);
+            viewPagerCity.setAdapter(cityPagerAdapter);
+        }
+
+        weatherWeekPagerAdapter = new WeatherWeekPagerAdapter(getSupportFragmentManager());
+        viewPagerWeek.setAdapter(weatherWeekPagerAdapter);
+
+        cityTodayFragment = cityPagerAdapter.getItem(0);
+        weatherWeekFragmentOne = weatherWeekPagerAdapter.getItem(0);
+        weatherWeekFragmentTwo = weatherWeekPagerAdapter.getItem(1);
+
+        //TODO
+        CityDatabase cityDatabase = new CityDatabase();
+        cityDatabase = db.getCityByName(cityPagerAdapter.getItem(0).getCityName());
+
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String strToday = dateFormat.format(date);
+        for (int i = 0; i < db.getAllWeatherInfo().size() - 1; i++) {
+
+            if (strToday.equalsIgnoreCase(db.getAllWeatherInfo().get(i).getDate().trim()) && db.getIdCity(cityPagerAdapter.getItem(0).getCityName()) == db.getAllWeatherInfo().get(i).getId()) {
+
+
+                cityTodayFragment.setDataOffline(cityDatabase, db.getAllWeatherInfo().get(i));
+                weatherWeekFragmentOne.setDataOffline(db.getAllWeatherInfo().get(i + 1), db.getAllWeatherInfo().get(i + 2));
+                weatherWeekFragmentTwo.setDataOffline(db.getAllWeatherInfo().get(i + 3), db.getAllWeatherInfo().get(i + 4));
+            }
+        }
+
+        viewPagerCity.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                cityTodayFragment = cityPagerAdapter.getItem(position);
+                CityDatabase cityDatabaseChange = db.getCityByName(cityTodayFragment.getCityName());
+                Log.d("CHANGE", "" + cityDatabaseChange.getName());
+                viewPagerWeek.setCurrentItem(0);
+                weatherWeekFragmentOne = weatherWeekPagerAdapter.getItem(0);
+                weatherWeekFragmentTwo = weatherWeekPagerAdapter.getItem(1);
+
+                Date date = new Date();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String strToday = dateFormat.format(date);
+
+                for (int i = 0; i < db.getAllWeatherInfo().size() - 1; i++) {
+
+                    if (strToday.equalsIgnoreCase(db.getAllWeatherInfo().get(i).getDate().trim()) && db.getIdCity(cityPagerAdapter.getItem(position).getCityName()) == db.getAllWeatherInfo().get(i).getId()) {
+
+
+                        cityTodayFragment.setDataOffline(cityDatabaseChange, db.getAllWeatherInfo().get(i));
+
+                        weatherWeekFragmentOne.setDataOffline(db.getAllWeatherInfo().get(i + 1), db.getAllWeatherInfo().get(i + 2));
+                        weatherWeekFragmentTwo.setDataOffline(db.getAllWeatherInfo().get(i + 3), db.getAllWeatherInfo().get(i + 4));
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+
+    }
+
+    private void loadData(CityTodayFragment cityTodayFragment) {
+
+
+        if (isNetworkOnline()) {
+            GetData getData = new GetData(WeatherActivity.this.getApplicationContext());
+            getData.execute(cityTodayFragment.getCityName());
+        } else {
+            Toast.makeText(WeatherActivity.this, "Kiểm tra lại kết nối mạng", Toast.LENGTH_SHORT).show();
+            processUpdateOffline();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+        if (isNetworkOnline()) {
+            if (SettingSharePreference.getIntPreference(WeatherActivity.this, SettingUpdateActivity.KEY_SETTING_UPDATE) == -1 || SettingSharePreference.getIntPreference(WeatherActivity.this, SettingUpdateActivity.KEY_SETTING_UPDATE) == 0) {
+                processUpdate();
+            } else {
+                timeCountDown = SettingSharePreference.getIntPreference(WeatherActivity.this, SettingUpdateActivity.KEY_SETTING_UPDATE);
+
+                Timer myTimer = new Timer();
+                myTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        updateGUI();
+                    }
+                }, 0, secondTimeInOneMinute * timeCountDown);
+            }
+        } else {
+            Toast.makeText(WeatherActivity.this, "Kiểm tra kết nối mạng", Toast.LENGTH_SHORT).show();
+            processUpdate();
+        }
+
+    }
+
+    private class ImageLoaderForNotification extends AsyncTask<String, Void, Bitmap> {
+
+        Context ctx;
+        String message;
+
+        public ImageLoaderForNotification(Context context) {
+            super();
+            this.ctx = context;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+
+            InputStream in;
+            message = params[0];
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                in = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(in);
+                return myBitmap;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+
+            super.onPostExecute(result);
+            try {
+                NotificationManager notificationManager = (NotificationManager) ctx
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+
+                Intent intent = new Intent(ctx, WeatherActivity.class);
+                intent.putExtra("isFromBadge", false);
+
+
+                Notification notification = new Notification.Builder(ctx)
+                        .setContentTitle("" + weatherDataObject.getCity().getName().toString())
+                        .setContentText("" + weatherDataObject.getList().get(0).getWeather().get(0).getDescription() + " " + "" + Tool.convertKenvilToCelcius(Float.parseFloat("" + weatherDataObject.getList().get(0).getMain().getTempMin())) + "\u2103" + " / " + Tool.convertKenvilToCelcius(Float.parseFloat("" + weatherDataObject.getList().get(0).getMain().getTempMin())) + "\u2103")
+                        .setSmallIcon(R.drawable.ic_weather)
+                        .setLargeIcon(result)
+                        .setStyle(new Notification.BigPictureStyle().bigPicture(result)).build();
+
+                // hide the notification after its selected
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                notificationManager.notify(1, notification);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }
